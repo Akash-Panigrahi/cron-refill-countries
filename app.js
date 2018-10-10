@@ -1,15 +1,13 @@
-const express = require('express');
 const cron = require('node-cron');
 
-const app = express();
+const { allCountries } = require('./index');
 
-const { allCountries, catchErrors } = require('./index');
+const task = cron.schedule('* 7 * * *', () => {
 
+	console.log('Running a task every morning at 07 am!');
 
-cron.schedule('30 * * * * *', function () {
-	console.log('Running a task every minute');
-	catchErrors(allCountries)();
+	allCountries()
+		.catch(err => console.error(err));
 });
 
-
-app.listen(3128);
+task.start();

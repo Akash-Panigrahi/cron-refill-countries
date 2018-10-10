@@ -1,13 +1,22 @@
-const axios = require('axios');
+const axios = require('axios')
+  , mongoose = require('mongoose')
+  , Schema = mongoose.Schema;
 
-exports.allCountries = async function (req, res) {
-	const countries = await axios.get('https://restcountries.eu/rest/v2/all');
-	console.log(countries);
-	return countries;
-};
+const countrySchema = new Schema({}, { strict: false });
+const Country = mongoose.model('Country', countrySchema);
 
-exports.catchErrors = (fn) => {
-  return function(req, res, next) {
-    return fn(req, res, next).catch(next);
-  };
+exports.allCountries = async () => {
+
+  // 1. empty out the countries collection
+  const deleteManyRes = Country.deleteMany();
+  const countries =
+
+    await axios
+      .get('https://restcountries.eu/rest/v2/all')
+      .then(res => res.data);
+
+  await deleteManyRes;
+
+  // 2. insert new documents in 'countries' collection
+  const countriesRes = await Country.insertMany(countries);
 };
