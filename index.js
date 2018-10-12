@@ -9,8 +9,8 @@ exports.allCountries = async () => {
 
   // 1. empty out the countries collection
   const deleteManyRes = Country.deleteMany();
-  const countries =
 
+  const countries =
     await axios
       .get('https://restcountries.eu/rest/v2/all')
       .then(res => res.data);
@@ -18,5 +18,5 @@ exports.allCountries = async () => {
   await deleteManyRes;
 
   // 2. insert new documents in 'countries' collection
-  const countriesRes = await Country.insertMany(countries);
+  await Country.insertMany(countries);
 };
